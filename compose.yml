@@ -1,15 +1,15 @@
 services:
   auth-service:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     container_name: auth-container
     ports:
-      - "${PORT_HOST}:${PORT_CONTENEDOR}"        
+      - '${PORT_HOST}:${PORT_CONTENEDOR}'
     volumes:
-      - ./auth-service-ms:/app
-      - /app/node_modules       
+      - .:/app
+      - /app/node_modules
     env_file:
-      - .env                     
+      - .env
     environment:
       - NODE_ENV=${NODE_ENV}
