@@ -15,8 +15,24 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should return the expected success response object', () => {
+      expect(appController.getHello()).toEqual({
+        message: 'Servicio de autenticación disponible',
+        data: {
+          greeting: 'Hello World!',
+        },
+      });
+    });
+  });
+
+  describe('register', () => {
+    it('should return a created payload', () => {
+      expect(appController.register()).toEqual({
+        message: 'Usuario creado',
+        data: {
+          userId: '123',
+        },
+      });
     });
   });
 });

@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # 7. Informamos que el contenedor escuchará en el puerto 3000
-EXPOSE 3001
+EXPOSE 3000
 
 # 8. Comando para ejecutar la aplicación en modo desarrollo
 CMD ["npm", "run", "start:dev"]
