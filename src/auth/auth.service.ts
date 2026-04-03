@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import * as crypto from 'crypto';
+import { JwtService } from '@nestjs/jwt';
 import { AuthUser } from './entities/auth-user.entity';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
@@ -12,9 +13,10 @@ import { RegisterDto } from './dto/register.dto';
 @Injectable()
 export class AuthService {
   private readonly users: AuthUser[] = [];
-  private readonly tokenStore = new Map<string, string>();
   private nextSequence = 1;
   private readonly roles = ['admin', 'staff', 'patient'];
+
+  constructor(private jwtService: JwtService) {}
 
   register(registerDto: RegisterDto) {
     const { email, password, fullName, role } = registerDto;
@@ -44,7 +46,7 @@ export class AuthService {
     };
 
     this.users.push(user);
-    const token = this.createToken(user.userId);
+    const token = this.createToken(user.userId, user.role);
 
     return {
       user: {
@@ -73,7 +75,7 @@ export class AuthService {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    const token = this.createToken(user.userId);
+    const token = this.createToken(user.userId, user.role);
     return {
       user: {
         id: user.userId,
@@ -85,19 +87,24 @@ export class AuthService {
     };
   }
 
+  validateToken(token: string) {
+    try {
+      const payload = this.jwtService.verify(token);
+      return payload;
+    } catch (error) {
+      throw new UnauthorizedException('Token inválido');
+    }
+  }
+
   getAuthenticatedUser(authHeader: string | undefined) {
     const token = this.extractToken(authHeader);
     if (!token) {
       throw new UnauthorizedException('Token no válido');
     }
 
-    const userId = this.tokenStore.get(token);
-    if (!userId) {
-      throw new UnauthorizedException('Token no válido');
-    }
-
+    const payload = this.validateToken(token);
     const user = this.users.find(
-      (stored) => stored.userId === userId && stored.isActive,
+      (stored) => stored.userId === payload.userId && stored.isActive,
     );
     if (!user) {
       throw new UnauthorizedException('Usuario no encontrado');
@@ -111,10 +118,9 @@ export class AuthService {
     };
   }
 
-  private createToken(userId: string) {
-    const token = crypto.randomBytes(32).toString('hex');
-    this.tokenStore.set(token, userId);
-    return token;
+  private createToken(userId: string, role: string) {
+    const payload = { userId, role };
+    return this.jwtService.sign(payload);
   }
 
   private hashPassword(password: string) {
