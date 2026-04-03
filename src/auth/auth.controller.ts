@@ -32,6 +32,28 @@ export class AuthController {
     };
   }
 
+  @Post('validate')
+  @HttpCode(200)
+  validate(@Body() body: { token: string }) {
+    try {
+      const payload = this.authService.validateToken(body.token);
+      return {
+        success: true,
+        message: 'Token válido',
+        data: {
+          userId: payload.userId,
+          role: payload.role,
+        },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Token inválido',
+        data: null,
+      };
+    }
+  }
+
   @Get('me')
   me(@Headers('authorization') authorization: string) {
     const user = this.authService.getAuthenticatedUser(authorization);
