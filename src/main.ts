@@ -7,7 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalInterceptors(new ResponseInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
-  await app.listen(3001);
-  console.log(`Microservicio de Auth corriendo en puerto interno: 3001`);
+  await app.listen(3000);
+  console.log(`Microservicio de Auth corriendo en puerto interno: 3000`);
 }
 bootstrap();
