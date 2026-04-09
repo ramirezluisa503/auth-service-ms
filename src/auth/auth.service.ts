@@ -16,7 +16,7 @@ export class AuthService {
   private nextSequence = 1;
   private readonly roles = ['admin', 'staff', 'patient'];
 
-  constructor(private jwtService: JwtService) { }
+  constructor(private jwtService: JwtService) {}
 
   register(registerDto: RegisterDto) {
     const { email, password, fullName, role } = registerDto;
