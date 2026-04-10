@@ -1,4 +1,5 @@
 services:
+  # 1. microservicio de NestJS
   auth-service:
     build:
       context: .
@@ -13,3 +14,35 @@ services:
       - .env
     environment:
       - NODE_ENV=${NODE_ENV}
+    depends_on:
+      - db # Espera a que la base de datos esté lista antes de arrancar
+
+  # 2. motor de Base de Datos MySQL (Aislado de tu XAMPP local)
+  db:
+    image: mysql:8.0
+    container_name: auth-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    ports:
+      - "3307:3306" # Expuesto en el 3307 para no pelear con tu PC
+    volumes:
+      - mysql-data:/var/lib/mysql # Guarda los datos para que sean persistentes
+
+  # 3. panel de control visual para la base de datos
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: auth-phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_USER: ${DB_USER}
+      PMA_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "8080:80" # Tu puerta de entrada visual
+    depends_on:
+      - db
+
+# El espacio en tu disco duro reservado para que los usuarios no se borren
+volumes:
+  mysql-data:
