@@ -52,6 +52,7 @@ export class AuthService {
         fullName: savedUser.fullName,
         email: savedUser.email,
         role: savedUser.role,
+        createdAt: savedUser.createdAt, // (ISO 8601)
       },
       token,
     };
@@ -80,6 +81,7 @@ export class AuthService {
         fullName: user.fullName,
         email: user.email,
         role: user.role,
+        createdAt: user.createdAt, // (ISO 8601)
       },
       token,
     };
@@ -117,6 +119,7 @@ export class AuthService {
       fullName: user.fullName,
       email: user.email,
       role: user.role,
+      createdAt: user.createdAt, // (ISO 8601)
     };
   }
 
