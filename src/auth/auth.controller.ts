@@ -16,8 +16,9 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  register(@Body() registerDto: RegisterDto) {
-    const result = this.authService.register(registerDto);
+  async register(@Body() registerDto: RegisterDto) {
+    const result = await this.authService.register(registerDto);
+
     return {
       message: 'Usuario registrado correctamente',
       data: {
@@ -29,8 +30,9 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(200)
-  login(@Body() loginDto: LoginDto) {
-    const result = this.authService.login(loginDto);
+  async login(@Body() loginDto: LoginDto) {
+    const result = await this.authService.login(loginDto);
+
     return {
       message: 'Usuario autenticado correctamente',
       data: {
@@ -59,8 +61,9 @@ export class AuthController {
   }
 
   @Get('me')
-  me(@Headers('authorization') authorization: string) {
-    const user = this.authService.getAuthenticatedUser(authorization);
+  async me(@Headers('authorization') authorization: string) {
+    const user = await this.authService.getAuthenticatedUser(authorization);
+
     return {
       message: 'Usuario autenticado',
       data: {
