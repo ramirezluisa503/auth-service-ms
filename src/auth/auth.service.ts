@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ConflictException,
   Injectable,
   UnauthorizedException,
@@ -20,14 +19,6 @@ export class AuthService {
 
   register(registerDto: RegisterDto) {
     const { email, password, fullName, role } = registerDto;
-
-    if (!email || !password || !fullName || !role) {
-      throw new BadRequestException('Todos los campos son obligatorios');
-    }
-
-    if (!this.roles.includes(role)) {
-      throw new BadRequestException('Role inválido');
-    }
 
     if (this.users.some((user) => user.email === email)) {
       throw new ConflictException('El correo ya está registrado');
@@ -61,10 +52,6 @@ export class AuthService {
 
   login(loginDto: LoginDto) {
     const { email, password } = loginDto;
-
-    if (!email || !password) {
-      throw new BadRequestException('Email y contraseña son requeridos');
-    }
 
     const user = this.users.find((stored) => stored.email === email);
     if (!user || !user.isActive) {
